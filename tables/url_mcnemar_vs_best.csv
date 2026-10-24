@@ -1,0 +1,12 @@
+Best model,Compared with,Best right / other wrong,Other right / best wrong,McNemar exact p,Significant (p<0.05)
+Voting Ensemble,Logistic Regression,56,54,0.9240973917982831,No
+Voting Ensemble,Linear SVM,63,49,0.21913114749778423,No
+Voting Ensemble,k-Nearest Neighbors,116,64,0.00013040123297739797,Yes
+Voting Ensemble,Decision Tree,108,40,2.0722273302304695e-08,Yes
+Voting Ensemble,Random Forest,87,40,3.6926110903098105e-05,Yes
+Voting Ensemble,Extra Trees,136,60,5.8331031320899936e-08,Yes
+Voting Ensemble,Gradient Boosting,44,27,0.05681467793283902,No
+Voting Ensemble,HistGradientBoosting,28,19,0.24296021728332556,No
+Voting Ensemble,XGBoost,18,12,0.36159460805356514,No
+Voting Ensemble,LightGBM,24,23,1.0,No
+Voting Ensemble,MLP (neural net),48,49,1.0,No

@@ -1,0 +1,3 @@
+System,Accuracy,Precision,Recall,F1,ROC-AUC,PR-AUC,MCC,Specificity
+Text model only (hardened),0.8667,0.8929,0.8333,0.8621,0.9056,0.9294,0.735,0.9
+ScamShield agent (text + domain verifier),0.8667,0.8929,0.8333,0.8621,0.9089,0.9338,0.735,0.9

@@ -1,0 +1,658 @@
+[
+  {
+    "text": "Your account has been temporarily suspended due to unusual activity. Verify your identity within 24 hours: http://secure-bank-verify.xyz/login",
+    "p_text": 0.9991,
+    "p_url": 0.9819,
+    "risk": 1.0,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [
+        "http://secure-bank-verify.xyz/login"
+      ],
+      "hosts": [
+        "secure-bank-verify.xyz"
+      ],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [
+      "Urgency / time pressure",
+      "Authority impersonation",
+      "Fear / threat",
+      "Payment / credential request"
+    ],
+    "domain_checks": [
+      {
+        "host": "secure-bank-verify.xyz",
+        "in_phishing_db": false,
+        "in_top_domains": false,
+        "url_shortener": false,
+        "free_hosting": false,
+        "lookalike_of": "",
+        "lookalike_score": 53.333333333333336,
+        "domain_model_p": 0.9819,
+        "domain_risk": 0.9819
+      }
+    ],
+    "top_terms": [
+      [
+        "contains a link",
+        5.165
+      ],
+      [
+        "word 'your'",
+        0.845
+      ],
+      [
+        "word 'http'",
+        0.366
+      ],
+      [
+        "word 'to'",
+        0.302
+      ],
+      [
+        "word 'been'",
+        0.258
+      ]
+    ],
+    "why": [
+      "secure-bank-verify.xyz stuffs security/finance words into the address (verify, secure, bank)",
+      "secure-bank-verify.xyz uses many hyphens, a common phishing pattern",
+      "'.xyz' is a low-cost TLD heavily used by phishing sites",
+      "domain model rates secure-bank-verify.xyz as phishing-like (P=0.98)",
+      "manipulation tactics: Urgency / time pressure, Authority impersonation, Fear / threat, Payment / credential request"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "Your package could not be delivered due to an incorrect address. Pay a $1.99 redelivery fee: http://postal-redeliver.info/pay",
+    "p_text": 0.9999,
+    "p_url": 0.8094,
+    "risk": 1.0,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [
+        "http://postal-redeliver.info/pay"
+      ],
+      "hosts": [
+        "postal-redeliver.info"
+      ],
+      "phones": [],
+      "amounts": [
+        "$1.99"
+      ]
+    },
+    "tactics": [
+      "Payment / credential request"
+    ],
+    "domain_checks": [
+      {
+        "host": "postal-redeliver.info",
+        "in_phishing_db": false,
+        "in_top_domains": false,
+        "url_shortener": false,
+        "free_hosting": false,
+        "lookalike_of": "",
+        "lookalike_score": 59.25925925925925,
+        "domain_model_p": 0.8094,
+        "domain_risk": 0.8094
+      }
+    ],
+    "top_terms": [
+      [
+        "contains a link",
+        5.165
+      ],
+      [
+        "mentions money",
+        2.094
+      ],
+      [
+        "word 'your'",
+        0.629
+      ],
+      [
+        "word 'info'",
+        0.528
+      ],
+      [
+        "word 'http'",
+        0.461
+      ]
+    ],
+    "why": [
+      "'.info' is a low-cost TLD heavily used by phishing sites",
+      "domain model rates postal-redeliver.info as phishing-like (P=0.81)",
+      "manipulation tactics: Payment / credential request"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "Tax refund of $842 is pending. Confirm your details to receive the deposit: http://tax-refund-claim.top",
+    "p_text": 0.9999,
+    "p_url": 0.9669,
+    "risk": 1.0,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [
+        "http://tax-refund-claim.top"
+      ],
+      "hosts": [
+        "tax-refund-claim.top"
+      ],
+      "phones": [],
+      "amounts": [
+        "$842"
+      ]
+    },
+    "tactics": [
+      "Authority impersonation",
+      "Reward / greed",
+      "Payment / credential request"
+    ],
+    "domain_checks": [
+      {
+        "host": "tax-refund-claim.top",
+        "in_phishing_db": false,
+        "in_top_domains": false,
+        "url_shortener": false,
+        "free_hosting": false,
+        "lookalike_of": "",
+        "lookalike_score": 48.275862068965516,
+        "domain_model_p": 0.9669,
+        "domain_risk": 0.9669
+      }
+    ],
+    "top_terms": [
+      [
+        "contains a link",
+        5.165
+      ],
+      [
+        "mentions money",
+        2.094
+      ],
+      [
+        "word 'your'",
+        0.642
+      ],
+      [
+        "word 'claim'",
+        0.592
+      ],
+      [
+        "word 'http'",
+        0.471
+      ]
+    ],
+    "why": [
+      "tax-refund-claim.top stuffs security/finance words into the address (claim, refund)",
+      "tax-refund-claim.top uses many hyphens, a common phishing pattern",
+      "'.top' is a low-cost TLD heavily used by phishing sites",
+      "domain model rates tax-refund-claim.top as phishing-like (P=0.97)",
+      "manipulation tactics: Authority impersonation, Reward / greed, Payment / credential request"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "Your bank account is on hold. Click here to unlock: http://bit.ly/3xKLm92",
+    "p_text": 0.9536,
+    "p_url": 0.6,
+    "risk": 0.9814,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [
+        "http://bit.ly/3xKLm92"
+      ],
+      "hosts": [
+        "bit.ly"
+      ],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [
+      "Authority impersonation",
+      "Fear / threat"
+    ],
+    "domain_checks": [
+      {
+        "host": "bit.ly",
+        "in_phishing_db": false,
+        "in_top_domains": false,
+        "url_shortener": true,
+        "free_hosting": false,
+        "lookalike_of": "",
+        "lookalike_score": 57.14285714285714,
+        "domain_model_p": 0.0165,
+        "domain_risk": 0.6
+      }
+    ],
+    "top_terms": [
+      [
+        "contains a link",
+        5.165
+      ],
+      [
+        "word 'your'",
+        0.593
+      ],
+      [
+        "word 'http'",
+        0.435
+      ],
+      [
+        "many digits",
+        0.364
+      ],
+      [
+        "word 'to'",
+        0.359
+      ]
+    ],
+    "why": [
+      "bit.ly is a link shortener that hides the real destination",
+      "manipulation tactics: Authority impersonation, Fear / threat"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "Mom I lost my phone, this is my new number. Can you send me money for an urgent bill? I'll explain later.",
+    "p_text": 0.0054,
+    "p_url": 0.0,
+    "risk": 0.0054,
+    "verdict": "LOW - looks legitimate",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [
+      "Urgency / time pressure",
+      "Impersonating an acquaintance / romance"
+    ],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "word 'new'",
+        0.465
+      ],
+      [
+        "word 'for'",
+        0.331
+      ],
+      [
+        "word 'money'",
+        0.287
+      ],
+      [
+        "word 'an'",
+        0.286
+      ],
+      [
+        "word 'this'",
+        0.211
+      ]
+    ],
+    "why": [
+      "manipulation tactics: Urgency / time pressure, Impersonating an acquaintance / romance"
+    ],
+    "advice": [
+      "No strong scam signals found. Still avoid sharing OTPs or passwords with anyone who contacts you first."
+    ]
+  },
+  {
+    "text": "Hi, I'm Emma. I think I texted the wrong number, but you seem nice. Can we chat?",
+    "p_text": 0.0004,
+    "p_url": 0.0,
+    "risk": 0.0004,
+    "verdict": "LOW - looks legitimate",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [
+      "Impersonating an acquaintance / romance"
+    ],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "word 'chat'",
+        0.757
+      ],
+      [
+        "word 'you'",
+        0.138
+      ],
+      [
+        "word 'number'",
+        0.115
+      ],
+      [
+        "ALL-CAPS text",
+        0.106
+      ]
+    ],
+    "why": [
+      "manipulation tactics: Impersonating an acquaintance / romance"
+    ],
+    "advice": [
+      "No strong scam signals found. Still avoid sharing OTPs or passwords with anyone who contacts you first."
+    ]
+  },
+  {
+    "text": "Your OTP for login is 482913. It is valid for 10 minutes. Do not share it with anyone.",
+    "p_text": 0.1914,
+    "p_url": 0.0,
+    "risk": 0.1914,
+    "verdict": "LOW - looks legitimate",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [
+      "Payment / credential request"
+    ],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "many digits",
+        0.824
+      ],
+      [
+        "word 'for'",
+        0.689
+      ],
+      [
+        "word 'your'",
+        0.483
+      ],
+      [
+        "word 'with'",
+        0.329
+      ],
+      [
+        "word 'anyone'",
+        0.232
+      ]
+    ],
+    "why": [
+      "manipulation tactics: Payment / credential request"
+    ],
+    "advice": [
+      "No strong scam signals found. Still avoid sharing OTPs or passwords with anyone who contacts you first."
+    ]
+  },
+  {
+    "text": "Thanks for your payment of $45.00 to City Water. Your receipt is available in your account.",
+    "p_text": 0.9636,
+    "p_url": 0.0,
+    "risk": 0.9636,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": [
+        "$45.00"
+      ]
+    },
+    "tactics": [],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "mentions money",
+        2.094
+      ],
+      [
+        "word 'your'",
+        0.995
+      ],
+      [
+        "word 'for your'",
+        0.668
+      ],
+      [
+        "word 'for'",
+        0.399
+      ],
+      [
+        "many digits",
+        0.39
+      ]
+    ],
+    "why": [],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "Your verification code is 771204. If you did not request this, you can ignore this message.",
+    "p_text": 0.3196,
+    "p_url": 0.0,
+    "risk": 0.3196,
+    "verdict": "LOW - looks legitimate",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "word 'this message'",
+        0.677
+      ],
+      [
+        "many digits",
+        0.584
+      ],
+      [
+        "word 'your'",
+        0.559
+      ],
+      [
+        "word 'this'",
+        0.508
+      ],
+      [
+        "word 'ignore'",
+        0.38
+      ]
+    ],
+    "why": [],
+    "advice": [
+      "No strong scam signals found. Still avoid sharing OTPs or passwords with anyone who contacts you first."
+    ]
+  },
+  {
+    "text": "FREE entry in 2 a weekly comp to win FA Cup tickets! Text FA to 87121 now. T&C apply 08452810075",
+    "p_text": 1.0,
+    "p_url": 0.0,
+    "risk": 1.0,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [
+        "08452810075"
+      ],
+      "amounts": []
+    },
+    "tactics": [
+      "Reward / greed"
+    ],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "contains a phone number",
+        9.719
+      ],
+      [
+        "many digits",
+        1.569
+      ],
+      [
+        "word 'text'",
+        1.022
+      ],
+      [
+        "word 'free'",
+        0.801
+      ],
+      [
+        "word 'win'",
+        0.56
+      ]
+    ],
+    "why": [
+      "manipulation tactics: Reward / greed"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "U r a WINNER! Claim your cash prize now - call 09061701461 urgently",
+    "p_text": 1.0,
+    "p_url": 0.0,
+    "risk": 1.0,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [
+        "09061701461"
+      ],
+      "amounts": []
+    },
+    "tactics": [
+      "Reward / greed"
+    ],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "contains a phone number",
+        9.719
+      ],
+      [
+        "many digits",
+        1.455
+      ],
+      [
+        "word 'your'",
+        0.783
+      ],
+      [
+        "word 'claim'",
+        0.721
+      ],
+      [
+        "word 'prize'",
+        0.547
+      ]
+    ],
+    "why": [
+      "manipulation tactics: Reward / greed"
+    ],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  },
+  {
+    "text": "F.R.E.E entry! W1n a pr1ze - cl@1m your ca$h today",
+    "p_text": 0.9934,
+    "p_url": 0.0,
+    "risk": 0.9934,
+    "verdict": "HIGH - likely scam",
+    "entities": {
+      "urls": [],
+      "hosts": [],
+      "phones": [],
+      "amounts": []
+    },
+    "tactics": [],
+    "domain_checks": [],
+    "top_terms": [
+      [
+        "mentions money",
+        2.094
+      ],
+      [
+        "word 'your'",
+        1.337
+      ],
+      [
+        "many digits",
+        0.532
+      ],
+      [
+        "word 'entry'",
+        0.495
+      ],
+      [
+        "exclamation marks",
+        0.294
+      ]
+    ],
+    "why": [],
+    "advice": [
+      "Do not click any link, call any number or reply.",
+      "Never share OTPs, PINs, passwords or card details.",
+      "Contact the organisation only via its official app or the number printed on your card/bill.",
+      "Report it to your bank (if money or cards are involved) and to your national cyber-crime or consumer-fraud authority.",
+      "Then delete the message and block the sender.",
+      "If you ALREADY clicked or replied: change the affected passwords, turn on two-factor authentication, call your bank to freeze cards/transfers if you shared financial details, and run a malware scan."
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+Reported messages (k),Held-out ROC-AUC (mean),Held-out ROC-AUC (std),Held-out PR-AUC (mean),Held-out PR-AUC (std),Held-out Recall (mean),Held-out Recall (std),Held-out F1 (mean),Held-out F1 (std),Held-out Specificity (mean),Held-out Specificity (std),Mean P(scam) on held-out scams (mean),Mean P(scam) on held-out scams (std),Legacy SMS F1 (mean),Legacy SMS F1 (std)
+0,0.9244,0.0303,0.9398,0.0259,0.8667,0.0471,0.8722,0.0381,0.88,0.0298,0.8389,0.0546,0.9572,0.0
+6,0.9289,0.0325,0.9437,0.03,0.84,0.076,0.8559,0.0493,0.88,0.0298,0.8267,0.0573,0.957,0.0028
+12,0.9324,0.0292,0.9477,0.026,0.8667,0.0667,0.8837,0.0534,0.9067,0.0365,0.8376,0.0585,0.9577,0.0031
+18,0.9351,0.0249,0.9498,0.0224,0.8533,0.0558,0.8762,0.0327,0.9067,0.0365,0.8384,0.057,0.957,0.0028
+30,0.936,0.0224,0.9519,0.0174,0.84,0.076,0.8738,0.0505,0.92,0.0298,0.8322,0.0552,0.957,0.0039

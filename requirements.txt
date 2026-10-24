@@ -1,0 +1,15 @@
+numpy
+pandas
+scipy
+scikit-learn>=1.3
+matplotlib
+seaborn
+xgboost
+lightgbm
+shap
+rapidfuzz
+requests
+joblib
+openpyxl
+# optional (LLM advisor hook, untested in the reported run):
+# anthropic

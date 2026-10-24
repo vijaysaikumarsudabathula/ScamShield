@@ -1,0 +1,6 @@
+Class,precision,recall,f1-score,support
+Legit,0.8755,0.9575,0.9147,1998.0
+Phishing,0.9531,0.8639,0.9063,1998.0
+accuracy,0.9107,0.9107,0.9107,0.9107
+macro avg,0.9143,0.9107,0.9105,3996.0
+weighted avg,0.9143,0.9107,0.9105,3996.0

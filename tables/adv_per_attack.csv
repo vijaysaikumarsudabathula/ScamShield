@@ -1,0 +1,85 @@
+Model,Config,Attack,Evasion rate,Known to defender
+Logistic Regression,Baseline,leet,0.041,Seen
+Logistic Regression,+ Canonicalization,leet,0.0082,Seen
+Voting Ensemble,Baseline,leet,0.0328,Seen
+Voting Ensemble,+ Canonicalization,leet,0.0163,Seen
+Linear SVM,Baseline,leet,0.0656,Seen
+Linear SVM,+ Canonicalization,leet,0.0246,Seen
+Voting Ensemble,+ Adversarial training,leet,0.0,Seen
+Logistic Regression,+ Canon. & Adv. training,leet,0.0081,Seen
+Logistic Regression,+ Adversarial training,leet,0.0082,Seen
+Voting Ensemble,+ Canon. & Adv. training,leet,0.0082,Seen
+Linear SVM,+ Adversarial training,leet,0.0,Seen
+Linear SVM,+ Canon. & Adv. training,leet,0.0083,Seen
+Logistic Regression,Baseline,space,0.0492,Seen
+Logistic Regression,+ Canonicalization,space,0.0,Seen
+Voting Ensemble,Baseline,space,0.0328,Seen
+Voting Ensemble,+ Canonicalization,space,0.0081,Seen
+Linear SVM,Baseline,space,0.0656,Seen
+Linear SVM,+ Canonicalization,space,0.0164,Seen
+Voting Ensemble,+ Adversarial training,space,0.0083,Seen
+Logistic Regression,+ Canon. & Adv. training,space,0.0081,Seen
+Logistic Regression,+ Adversarial training,space,0.0,Seen
+Voting Ensemble,+ Canon. & Adv. training,space,0.0,Seen
+Linear SVM,+ Adversarial training,space,0.0083,Seen
+Linear SVM,+ Canon. & Adv. training,space,0.0,Seen
+Logistic Regression,Baseline,synonym,0.0246,Seen
+Logistic Regression,+ Canonicalization,synonym,0.041,Seen
+Voting Ensemble,Baseline,synonym,0.0246,Seen
+Voting Ensemble,+ Canonicalization,synonym,0.0244,Seen
+Linear SVM,Baseline,synonym,0.041,Seen
+Linear SVM,+ Canonicalization,synonym,0.041,Seen
+Voting Ensemble,+ Adversarial training,synonym,0.0,Seen
+Logistic Regression,+ Canon. & Adv. training,synonym,0.0,Seen
+Logistic Regression,+ Adversarial training,synonym,0.0082,Seen
+Voting Ensemble,+ Canon. & Adv. training,synonym,0.0082,Seen
+Linear SVM,+ Adversarial training,synonym,0.0,Seen
+Linear SVM,+ Canon. & Adv. training,synonym,0.0,Seen
+Logistic Regression,Baseline,punct,0.0574,Seen
+Logistic Regression,+ Canonicalization,punct,0.0,Seen
+Voting Ensemble,Baseline,punct,0.041,Seen
+Voting Ensemble,+ Canonicalization,punct,0.0,Seen
+Linear SVM,Baseline,punct,0.0656,Seen
+Linear SVM,+ Canonicalization,punct,0.0,Seen
+Voting Ensemble,+ Adversarial training,punct,0.0083,Seen
+Logistic Regression,+ Canon. & Adv. training,punct,0.0,Seen
+Logistic Regression,+ Adversarial training,punct,0.0082,Seen
+Voting Ensemble,+ Canon. & Adv. training,punct,0.0,Seen
+Linear SVM,+ Adversarial training,punct,0.0,Seen
+Linear SVM,+ Canon. & Adv. training,punct,0.0,Seen
+Logistic Regression,Baseline,homoglyph,0.0738,Unseen
+Logistic Regression,+ Canonicalization,homoglyph,0.0,Unseen
+Voting Ensemble,Baseline,homoglyph,0.041,Unseen
+Voting Ensemble,+ Canonicalization,homoglyph,0.0,Unseen
+Linear SVM,Baseline,homoglyph,0.0738,Unseen
+Linear SVM,+ Canonicalization,homoglyph,0.0,Unseen
+Voting Ensemble,+ Adversarial training,homoglyph,0.0165,Unseen
+Logistic Regression,+ Canon. & Adv. training,homoglyph,0.0,Unseen
+Logistic Regression,+ Adversarial training,homoglyph,0.0164,Unseen
+Voting Ensemble,+ Canon. & Adv. training,homoglyph,0.0,Unseen
+Linear SVM,+ Adversarial training,homoglyph,0.025,Unseen
+Linear SVM,+ Canon. & Adv. training,homoglyph,0.0,Unseen
+Logistic Regression,Baseline,padding,0.0492,Unseen
+Logistic Regression,+ Canonicalization,padding,0.0656,Unseen
+Voting Ensemble,Baseline,padding,0.0902,Unseen
+Voting Ensemble,+ Canonicalization,padding,0.1057,Unseen
+Linear SVM,Baseline,padding,0.082,Unseen
+Linear SVM,+ Canonicalization,padding,0.0902,Unseen
+Voting Ensemble,+ Adversarial training,padding,0.0909,Unseen
+Logistic Regression,+ Canon. & Adv. training,padding,0.0813,Unseen
+Logistic Regression,+ Adversarial training,padding,0.082,Unseen
+Voting Ensemble,+ Canon. & Adv. training,padding,0.0984,Unseen
+Linear SVM,+ Adversarial training,padding,0.1,Unseen
+Linear SVM,+ Canon. & Adv. training,padding,0.1417,Unseen
+Logistic Regression,Baseline,zerowidth,0.0656,Unseen
+Logistic Regression,+ Canonicalization,zerowidth,0.0,Unseen
+Voting Ensemble,Baseline,zerowidth,0.0492,Unseen
+Voting Ensemble,+ Canonicalization,zerowidth,0.0,Unseen
+Linear SVM,Baseline,zerowidth,0.0656,Unseen
+Linear SVM,+ Canonicalization,zerowidth,0.0,Unseen
+Voting Ensemble,+ Adversarial training,zerowidth,0.0165,Unseen
+Logistic Regression,+ Canon. & Adv. training,zerowidth,0.0,Unseen
+Logistic Regression,+ Adversarial training,zerowidth,0.0,Unseen
+Voting Ensemble,+ Canon. & Adv. training,zerowidth,0.0,Unseen
+Linear SVM,+ Adversarial training,zerowidth,0.0167,Unseen
+Linear SVM,+ Canon. & Adv. training,zerowidth,0.0,Unseen

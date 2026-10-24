@@ -1,0 +1,31 @@
+Model,Config,Round,Accuracy,Precision,Recall,F1,ROC-AUC,FPR,Evasion (seen attacks),Evasion (unseen attacks),Evasion (all attacks),FPR on obfuscated legit
+Logistic Regression,Baseline,0,0.9884,0.976,0.9313,0.9531,0.9967,0.0033,0.0902,0.1803,0.1393,0.0011
+Logistic Regression,+ Canonicalization,0,0.9884,0.976,0.9313,0.9531,0.9972,0.0033,0.0492,0.0574,0.0902,0.0033
+Logistic Regression,+ Adversarial training,0,0.9884,0.976,0.9313,0.9531,0.9967,0.0033,0.0902,0.1803,0.1393,0.0011
+Logistic Regression,+ Adversarial training,1,0.9894,0.9839,0.9313,0.9569,0.9967,0.0022,0.0656,0.1721,0.0984,0.0077
+Logistic Regression,+ Adversarial training,2,0.9903,0.9919,0.9313,0.9606,0.9973,0.0011,0.0164,0.1475,0.082,0.0066
+Logistic Regression,+ Adversarial training,3,0.9894,0.9839,0.9313,0.9569,0.9972,0.0022,0.0082,0.123,0.082,0.0044
+Logistic Regression,+ Canon. & Adv. training,0,0.9884,0.976,0.9313,0.9531,0.9972,0.0033,0.0492,0.0574,0.0902,0.0033
+Logistic Regression,+ Canon. & Adv. training,1,0.9903,0.9919,0.9313,0.9606,0.9973,0.0011,0.0082,0.1148,0.0738,0.0044
+Logistic Regression,+ Canon. & Adv. training,2,0.9884,0.976,0.9313,0.9531,0.9973,0.0033,0.0082,0.1066,0.0656,0.0044
+Logistic Regression,+ Canon. & Adv. training,3,0.9894,0.9762,0.9389,0.9572,0.9972,0.0033,0.0081,0.0976,0.0894,0.0044
+Voting Ensemble,Baseline,0,0.9913,1.0,0.9313,0.9644,0.9975,0.0,0.0574,0.1885,0.123,0.0
+Voting Ensemble,+ Canonicalization,0,0.9923,1.0,0.9389,0.9685,0.9978,0.0,0.0325,0.122,0.1138,0.0
+Voting Ensemble,+ Adversarial training,0,0.9913,1.0,0.9313,0.9644,0.9975,0.0,0.0574,0.1885,0.123,0.0
+Voting Ensemble,+ Adversarial training,1,0.9903,1.0,0.9237,0.9603,0.9975,0.0,0.0248,0.1653,0.0992,0.0022
+Voting Ensemble,+ Adversarial training,2,0.9913,1.0,0.9313,0.9644,0.9985,0.0,0.0164,0.1393,0.0902,0.0011
+Voting Ensemble,+ Adversarial training,3,0.9903,1.0,0.9237,0.9603,0.998,0.0,0.0083,0.1157,0.0826,0.0011
+Voting Ensemble,+ Canon. & Adv. training,0,0.9923,1.0,0.9389,0.9685,0.9978,0.0,0.0325,0.122,0.1138,0.0
+Voting Ensemble,+ Canon. & Adv. training,1,0.9903,1.0,0.9237,0.9603,0.9975,0.0,0.0,0.1157,0.0909,0.0011
+Voting Ensemble,+ Canon. & Adv. training,2,0.9903,1.0,0.9237,0.9603,0.9976,0.0,0.0,0.1157,0.0826,0.0011
+Voting Ensemble,+ Canon. & Adv. training,3,0.9913,1.0,0.9313,0.9644,0.9976,0.0,0.0082,0.1311,0.0984,0.0
+Linear SVM,Baseline,0,0.9903,0.9919,0.9313,0.9606,0.998,0.0011,0.1148,0.2049,0.1721,0.0011
+Linear SVM,+ Canonicalization,0,0.9903,0.9919,0.9313,0.9606,0.9982,0.0011,0.0492,0.0984,0.1148,0.0011
+Linear SVM,+ Adversarial training,0,0.9903,0.9919,0.9313,0.9606,0.998,0.0011,0.1148,0.2049,0.1721,0.0011
+Linear SVM,+ Adversarial training,1,0.9884,0.9917,0.916,0.9524,0.9979,0.0011,0.0333,0.1917,0.125,0.0055
+Linear SVM,+ Adversarial training,2,0.9894,0.9918,0.9237,0.9565,0.9983,0.0011,0.0165,0.1322,0.0826,0.0044
+Linear SVM,+ Adversarial training,3,0.9894,1.0,0.916,0.9562,0.9983,0.0,0.0083,0.1417,0.0917,0.0044
+Linear SVM,+ Canon. & Adv. training,0,0.9903,0.9919,0.9313,0.9606,0.9982,0.0011,0.0492,0.0984,0.1148,0.0011
+Linear SVM,+ Canon. & Adv. training,1,0.9884,0.9917,0.916,0.9524,0.9981,0.0011,0.0083,0.1583,0.1167,0.0011
+Linear SVM,+ Canon. & Adv. training,2,0.9894,0.9918,0.9237,0.9565,0.998,0.0011,0.0248,0.1653,0.1157,0.0011
+Linear SVM,+ Canon. & Adv. training,3,0.9894,1.0,0.916,0.9562,0.9977,0.0,0.0,0.15,0.1167,0.0011

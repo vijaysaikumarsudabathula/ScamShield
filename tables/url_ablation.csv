@@ -1,0 +1,9 @@
+Configuration,# features,CV F1,Test F1,Test ROC-AUC,Test Recall
+All features,67,0.9066,0.9047,0.9602,0.8649
+"− Structure (length, labels, dots)",60,0.894,0.8901,0.9557,0.8473
+"− Lexical (digits, entropy, runs)",56,0.8945,0.9017,0.9555,0.8514
+− Keywords,65,0.9047,0.9046,0.9605,0.8639
+− Brand look-alike,64,0.9025,0.9021,0.956,0.8554
+− TLD,24,0.8821,0.8792,0.9428,0.8248
+− Free-hosting provider,66,0.9066,0.904,0.9604,0.8629
+Lexical + brand + keywords only (no structure/TLD/host),16,0.8688,0.8666,0.9331,0.8158

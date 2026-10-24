@@ -1,0 +1,13 @@
+Model,Train time (s),Inference (ms / sample)
+Voting Ensemble,5.1879,0.0692
+LightGBM,0.5785,0.016
+HistGradientBoosting,0.948,0.0056
+MLP (neural net),1.6233,0.0014
+Gradient Boosting,5.169,0.0026
+XGBoost,0.7832,0.0051
+Logistic Regression,0.164,0.0012
+Linear SVM,2.0282,0.0016
+Random Forest,3.9169,0.0487
+Decision Tree,0.0709,0.0007
+Extra Trees,4.6174,0.0812
+k-Nearest Neighbors,0.0208,0.0922

@@ -1,0 +1,6 @@
+Feature,Legit,Scam
+Mean length (chars),70.895,137.711
+Mean digits,0.297,15.489
+Contains URL (%),0.243,18.07
+Contains '!' (%),11.731,47.32
+ALL-CAPS ratio,0.057,0.11

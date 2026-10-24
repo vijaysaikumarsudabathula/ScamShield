@@ -1,0 +1,9 @@
+Item,Value
+Source,"UCI SMS Spam Collection (GitHub mirror, loaded via URL)"
+Raw messages,5574
+After de-duplication,5171
+Scam (spam) messages,653
+Legit (ham) messages,4518
+Scam share,12.63%
+Train / test split,4136 / 1035 (stratified 80/20)
+Cross-validation,5-fold stratified on training split

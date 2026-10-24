@@ -1,0 +1,10 @@
+Item,Value
+Phishing source,Phishing.Database ACTIVE domains (GitHub raw)
+Legitimate source,OpenDNS public top-10k domains (GitHub raw)
+Phishing domains in feed,391347
+Legit domains in list,10000
+Overlap removed (label noise),10
+Sampled per class,9990
+Engineered features,67
+Train / test split,15984 / 3996 (stratified 80/20)
+Cross-validation,5-fold stratified on training split

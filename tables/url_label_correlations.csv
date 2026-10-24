@@ -1,0 +1,26 @@
+Feature,Correlation with label
+entropy,0.5984
+length,0.5556
+n_subdomains,0.4618
+avg_label_len,0.4451
+max_label_len,0.4435
+n_labels,0.4408
+n_dots,0.4408
+free_host,0.4272
+n_hyphens,0.3913
+longest_digit_run,0.3571
+letter_ratio,-0.3483
+n_digits,0.3372
+digit_ratio,0.3368
+has_kw,0.2685
+kw_count,0.2534
+longest_consonant_run,0.2192
+brand_in_sub,0.1509
+is_ip,0.084
+brand_sim,-0.0775
+main_len,0.0648
+brand_in_main,-0.0363
+vowel_ratio,-0.0242
+is_shortener,-0.0173
+has_punycode,0.01
+main_entropy,0.0056

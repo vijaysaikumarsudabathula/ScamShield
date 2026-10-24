@@ -1,0 +1,1144 @@
+{
+ "title": "ScamShield: An Explainable and Adversarially Tested Framework for Detecting Scam Messages and Phishing Domains",
+ "author": "[Author Name(s), to be completed]",
+ "affil": "Department / Affiliation, City, Country",
+ "email": "email@example.com",
+ "header": "ScamShield: Explainable and Adversarially Tested Scam and Phishing Detection",
+ "abstract": "Scam texts and phishing links reach billions of people, but most filters give only a yes/no answer, are tested on a fixed dataset, and weaken when scammers change their wording. This paper presents ScamShield, a framework that detects scam messages and phishing domains, explains each decision, and tells the user what to do next. It uses only public data and runs in about 17 minutes on one CPU core. We test it with a simulated attacker that rewrites scams to avoid detection, and with 60 modern messages that differ from the training data. A logistic regression on the SMS Spam Collection reaches 98.8% accuracy (F1 0.953), although ten models cannot be statistically separated. Twelve domain models reach about 91% accuracy, but F1 falls to 0.65 on bare domains without sub-domains. The attacker evades 13.9% of caught scams; adversarial training cuts evasion of known tricks from 9.0% to 0.8% without hurting accuracy, but it does not stop scams padded with harmless text. On modern messages, linear models keep F1 between 0.80 and 0.86, while random forests fall to 0.33. A five-agent pipeline adds explanations but no extra correct decisions. ScamShield offers a practical and honest approach to scam detection.",
+ "keywords": "Scam Detection, Phishing, Adversarial Robustness, Concept Drift, Explainable AI, Multi-Agent Systems, Text Classification",
+ "blocks": [
+  {
+   "t": "h1",
+   "text": "I. INTRODUCTION"
+  },
+  {
+   "t": "p",
+   "text": "Scam messages and phishing links reach billions of people every day. Most research answers one question: is this message or link malicious [1], [2], [3]? Deployed filters then return that answer as a bare label. They do not say why a message was flagged, how much of what they catch would still get through if a scammer rewrote it, or how far accuracy falls when scam styles change after training. Answering these questions needs an adaptive-attacker test [4], [5] and a measurement of concept drift [6], not another accuracy table on a fixed test set."
+  },
+  {
+   "t": "p",
+   "text": "This paper presents ScamShield, which pairs a text detector and a phishing-domain detector with a black-box attacker, two defences, a probe of modern scams, and a five-agent pipeline that explains its verdict. Every model is chosen by cross-validation and compared with an exact significance test, not by one test split."
+  },
+  {
+   "t": "h2",
+   "text": "A. Research Questions"
+  },
+  {
+   "t": "p",
+   "text": "RQ1: Can interpretable features detect scam text well enough that the choice among ten models is settled by cross-validation and significance testing? RQ2: How well does the domain string alone identify phishing, and how much of that depends on shortcuts in the data? RQ3: How much caught scam text still evades an adaptive attacker, and how much do canonicalization and adversarial training reduce it, including for tricks never seen in training? RQ4: How far does a detector trained on a legacy corpus degrade on modern scams, and how fast can it adapt? RQ5: Does combining text and domain evidence change decisions, and which scams stay undetected?"
+  },
+  {
+   "t": "h2",
+   "text": "B. Contributions and Scope"
+  },
+  {
+   "t": "p",
+   "text": "The work contributes a ten-model text benchmark, a twelve-model domain benchmark with an ablation and a hard-subset test, an adaptive attacker with seven tricks (four seen, three held out) evaluated against two defences, a modern-scam probe with an adaptation curve, and a five-agent pipeline. It uses public data [1], [7], [8], a rule-based attacker, and a 60-message probe written by the author; Section VI.B explains what this means for the results."
+  },
+  {
+   "t": "h1",
+   "text": "II. RELATED WORK"
+  },
+  {
+   "t": "p",
+   "text": "For SMS filtering, Almeida et al. [1] released the corpus used here and compared classical learners on it. For phishing URLs, Ma et al. [2] showed that lexical and host features alone can find malicious sites, and Sahingoz et al. [3] reported 97.98% accuracy for a random forest on language-based URL features. Our domain-only setting drops the path and page content and builds its legitimate class differently, so it is harder and not directly comparable."
+  },
+  {
+   "t": "p",
+   "text": "For robustness, Dalvi et al. [4] framed spam filtering as a game against an adaptive adversary, and Lowd and Meek [5] showed that appending harmless words lets spam slip past statistical filters, the effect behind our padding attack. Adversarial training [9], [10] retrains on the strongest rewrites an attacker finds; we apply it to linear and ensemble text models. Gama et al. [6] survey adaptation to concept drift, the setting of Section V.D, and SHAP [11] explains the domain model."
+  },
+  {
+   "t": "p",
+   "text": "ScamShield draws on these lines directly. Phases 1 and 2 follow the feature-based approach of [1] and [2]; Phase 3 follows the adaptive-adversary framing of [4] and [5] with a defence in the spirit of [10]; and Phase 4 measures drift as described in [6], extended into an explicit legacy-versus-modern comparison and an adaptation curve. What is new here is the combination: one pipeline that is explainable, attacked on purpose, and checked against modern scam styles."
+  },
+  {
+   "t": "h1",
+   "text": "III. SCAMSHIELD FRAMEWORK ARCHITECTURE"
+  },
+  {
+   "t": "p",
+   "text": "ScamShield has five phases and a validation stage (Fig. 1). Every phase was run on real data or a fully specified simulation."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig1_flowchart.png",
+   "w": 2.75,
+   "h": 5.462,
+   "cap": "Fig. 1. ScamShield methodology flowchart.",
+   "key": "flow"
+  },
+  {
+   "t": "h2",
+   "text": "A. Phase 1: Scam-Text Detection"
+  },
+  {
+   "t": "p",
+   "text": "Each message is represented by word 1–2-gram and character 2–4-gram TF-IDF (up to 4,000 terms each) plus ten style cues (length, digit ratio, capitals, “!” and “?” counts, link flag, phone count, currency symbols, non-ASCII ratio). Ten classifiers are compared: two naive Bayes models, logistic regression, a linear SVM, random forest, extra trees, XGBoost [12], LightGBM [13], a small neural network, and a soft-voting ensemble, mostly from scikit-learn [14]. Regularization, smoothing and tree size were tuned by 3-fold grid search on the training split (C = 100 for logistic regression, C = 1 for the SVM). The final model is chosen by 5-fold cross-validated F1, never by the test split."
+  },
+  {
+   "t": "h2",
+   "text": "B. Phase 2: Phishing-Domain Detection"
+  },
+  {
+   "t": "p",
+   "text": "Phase 2 classifies a domain using only its string, with no page content, registration data or path. Its 67 features cover structure (length, sub-domain count), lexical content (digits, hyphens, entropy, longest runs), bait keywords, the top-level domain, free-hosting providers, and brand look-alikes (edit similarity to the 400 most popular domains). Twelve classifiers are compared with fixed, untuned settings, so small differences among them should not be over-read. A feature-group ablation and a hard subset of bare domains test how much accuracy comes from structure shared by the way the data were built."
+  },
+  {
+   "t": "h2",
+   "text": "C. Phase 3: Adversarial Hardening"
+  },
+  {
+   "t": "p",
+   "text": "The attacker is black-box: it sees only the scam score. For each caught scam it tries B rewrites, each a random mix of one to three tricks, and keeps the one with the lowest score. Seven tricks are used: leetspeak, spaced letters, synonyms, inserted punctuation (seen in training), and look-alike Unicode letters, zero-width characters, and appended harmless text, called padding (unseen). The evasion rate is"
+  },
+  {
+   "t": "eq",
+   "runs": "E = |{ x ∈ S<sub>c</sub> : f(a(x)) < τ }| / |S<sub>c</sub>|",
+   "num": "(1)"
+  },
+  {
+   "t": "p",
+   "text": "where S<sub>c</sub> is the set of test scams the model already catches, a(·) is the attacker's best rewrite, f is the scam score and τ = 0.5. Two defences are compared: a canonicalizer that undoes cheap obfuscation (Unicode normalization, zero-width removal, look-alike mapping, spacing and symbol clean-up), and adversarial training (Algorithm 1), which also adds obfuscated legitimate messages so that obfuscation alone is not learned as a scam signal."
+  },
+  {
+   "t": "algo",
+   "title": "Algorithm 1: Adaptive evasion and adversarial training",
+   "lines": [
+    [
+     "Input",
+     "model class f, training set D, seen tricks A<sub>seen</sub>, budget B, rounds R"
+    ],
+    [
+     "1",
+     "D′ ← D;  f<sub>0</sub> ← Fit(D′)"
+    ],
+    [
+     "2",
+     "<b>for</b> r = 1, …, R <b>do</b>"
+    ],
+    [
+     "3",
+     "    <b>for each</b> scam x in D <b>do</b>"
+    ],
+    [
+     "4",
+     "        draw B rewrites (1–3 random tricks from A<sub>seen</sub>)"
+    ],
+    [
+     "5",
+     "        x* ← rewrite with the lowest score f<sub>r−1</sub>(·)"
+    ],
+    [
+     "6",
+     "    H ← obfuscated copies of 25% of legitimate texts"
+    ],
+    [
+     "7",
+     "    D′ ← D′ ∪ {(x*, scam)} ∪ {(h, legit) : h ∈ H}"
+    ],
+    [
+     "8",
+     "    f<sub>r</sub> ← Fit(D′)"
+    ],
+    [
+     "9",
+     "<b>return</b> f<sub>R</sub>"
+    ]
+   ]
+  },
+  {
+   "t": "h2",
+   "text": "D. Phase 4: Concept-Drift Probe"
+  },
+  {
+   "t": "p",
+   "text": "A probe of 60 hand-written messages (30 scams, 30 legitimate) covers delivery-fee, toll, account, tax, job, investment, family-emergency and romance scams, plus legitimate look-alikes such as one-time codes and receipts. To test adaptation, the hardened model is retrained with k reported probe messages (k = 0 to 30, repeated five times in training) and tested on the other 30, over five random splits."
+  },
+  {
+   "t": "h2",
+   "text": "E. Phase 5: Multi-Agent Pipeline"
+  },
+  {
+   "t": "p",
+   "text": "Five agents run in order (Fig. 2). The Extractor finds links, phones and amounts. The Analyzer tags seven manipulation tactics (urgency, authority, fear, reward, payment request, secrecy, acquaintance impersonation). The Verifier checks each domain against the public phishing feed, a popular-domain list, a look-alike test and the Phase 2 model. The Scorer combines the text probability p<sub>t</sub> and the largest domain risk p<sub>d</sub> with a noisy-OR rule [15]:"
+  },
+  {
+   "t": "eq",
+   "runs": "R = 1 − (1 − p<sub>t</sub>)(1 − p<sub>d</sub>)",
+   "num": "(2)"
+  },
+  {
+   "t": "p",
+   "text": "The Advisor maps R to a verdict (high at R ≥ 0.85, suspicious from 0.5, otherwise low) and returns the evidence and next steps (Section III.F). The agents are code-orchestrated tools; no language model is used in any reported result."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig2_architecture.png",
+   "w": 3.15,
+   "h": 2.875,
+   "cap": "Fig. 2. ScamShield run-time architecture.",
+   "key": "arch"
+  },
+  {
+   "t": "h2",
+   "text": "F. Explanation and Advice Layer"
+  },
+  {
+   "t": "p",
+   "text": "Every verdict comes with its evidence. For the linear text model, the contribution of term j to the scam score is"
+  },
+  {
+   "t": "eq",
+   "runs": "c<sub>j</sub> = w<sub>j</sub> · x<sub>j</sub>",
+   "num": "(3)"
+  },
+  {
+   "t": "p",
+   "text": "where w<sub>j</sub> is the logistic-regression coefficient and x<sub>j</sub> the TF-IDF value, so the largest positive terms are shown as reasons for a flag. Domain findings and detected tactics are listed beside them. The advice separates what to do before acting (do not click, check through an official channel) from what to do if the person already clicked or replied (change passwords, turn on two-factor authentication, call the bank, report the message). The advice is templated; an optional language-model hook exists but is not used in any reported result."
+  },
+  {
+   "t": "h1",
+   "text": "IV. EXPERIMENTAL SETUP AND DATASET"
+  },
+  {
+   "t": "h2",
+   "text": "A. Dataset Description"
+  },
+  {
+   "t": "p",
+   "text": "The SMS Spam Collection [1] has 5,574 labeled messages; removing 403 duplicates leaves 5,171, of which 12.63% are scams. An 80/20 stratified split gives 4,136 training and 1,035 test messages (131 test scams). The domain data pair the Phishing.Database feed [7] (391,347 well-formed domains) with the 10,000 most popular OpenDNS domains [8]; ten domains in both were removed, and 9,990 were sampled per class (19,980 total; 15,984 training, 3,996 test). The modern probe has 60 messages written by the author."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig3_sms_eda.png",
+   "w": 3.3,
+   "h": 1.464,
+   "cap": "Fig. 3. Scam versus legitimate SMS: (a) message length and (b) digits per message.",
+   "key": "eda"
+  },
+  {
+   "t": "p",
+   "text": "Scams are about twice as long (mean 138 against 71 characters) and carry far more digits (mean 15.5 against 0.3; Fig. 3), which is why simple style cues help."
+  },
+  {
+   "t": "h2",
+   "text": "B. Implementation Environment"
+  },
+  {
+   "t": "p",
+   "text": "All experiments ran in Python 3.12 with scikit-learn, XGBoost, LightGBM, SHAP and RapidFuzz on one CPU core with 3 GB of memory and no GPU. The full pipeline runs in about 17 minutes. This is why the text detector uses TF-IDF instead of a fine-tuned transformer and the attacker is rule-based."
+  },
+  {
+   "t": "h2",
+   "text": "C. Evaluation Protocol"
+  },
+  {
+   "t": "p",
+   "text": "Models are tuned and cross-validated on the training split only, ranked by 5-fold F1 (ties broken by PR-AUC), and the best is scored once on the test split and compared with the others by an exact McNemar test [16]. Metrics are accuracy, precision, recall, F1 and ROC-AUC, with scams (or phishing domains) as the positive class. The seed is fixed at 42. The attacker uses B = 20 per scam in training and B = 30 at evaluation, measured on the 122 test scams the baseline catches, so one message is 0.8 percentage points."
+  },
+  {
+   "t": "h1",
+   "text": "V. RESULTS"
+  },
+  {
+   "t": "h2",
+   "text": "A. Scam-Text Detection (RQ1)"
+  },
+  {
+   "t": "table",
+   "title": "TABLE I.  SCAM-TEXT CLASSIFIER PERFORMANCE",
+   "header": [
+    "Model",
+    "CV F1",
+    "Acc.",
+    "Prec.",
+    "Rec.",
+    "F1",
+    "AUC"
+   ],
+   "rows": [
+    [
+     "Logistic Reg.",
+     "0.968 ± 0.023",
+     "0.988",
+     "0.976",
+     "0.931",
+     "0.953",
+     "0.997"
+    ],
+    [
+     "Voting Ens.",
+     "0.967 ± 0.022",
+     "0.991",
+     "1.000",
+     "0.931",
+     "0.964",
+     "0.998"
+    ],
+    [
+     "Linear SVM",
+     "0.962 ± 0.018",
+     "0.990",
+     "0.992",
+     "0.931",
+     "0.961",
+     "0.998"
+    ],
+    [
+     "Naive Bayes (mult.)",
+     "0.959 ± 0.021",
+     "0.991",
+     "0.977",
+     "0.954",
+     "0.965",
+     "0.996"
+    ],
+    [
+     "Naive Bayes (compl.)",
+     "0.951 ± 0.022",
+     "0.985",
+     "0.932",
+     "0.947",
+     "0.939",
+     "0.994"
+    ],
+    [
+     "LightGBM",
+     "0.947 ± 0.037",
+     "0.990",
+     "1.000",
+     "0.924",
+     "0.960",
+     "0.999"
+    ],
+    [
+     "Extra Trees",
+     "0.945 ± 0.030",
+     "0.987",
+     "1.000",
+     "0.901",
+     "0.948",
+     "0.999"
+    ],
+    [
+     "XGBoost",
+     "0.943 ± 0.034",
+     "0.991",
+     "1.000",
+     "0.931",
+     "0.964",
+     "0.997"
+    ],
+    [
+     "MLP",
+     "0.939 ± 0.039",
+     "0.988",
+     "0.984",
+     "0.924",
+     "0.953",
+     "0.997"
+    ],
+    [
+     "Random Forest",
+     "0.928 ± 0.038",
+     "0.987",
+     "1.000",
+     "0.893",
+     "0.944",
+     "0.998"
+    ]
+   ],
+   "widths": [
+    1180,
+    1000,
+    530,
+    530,
+    530,
+    530,
+    560
+   ],
+   "note": "TABLE I. CV F1 = 5-fold cross-validated F1 (mean ± std). Other columns = held-out test (1,035 messages, 131 scams). Bold = selected model.",
+   "bold_row": 0
+  },
+  {
+   "t": "p",
+   "text": "Table I reports ten models. Logistic regression has the highest cross-validated F1 (0.968), with the voting ensemble tied (0.967). On the test split it reaches 98.8% accuracy, precision 0.976, recall 0.931 and F1 0.953 (901 of 904 legitimate messages correct, 122 of 131 scams caught; Fig. 6a). Naive Bayes has the highest test F1 (0.965), but no model differs significantly from logistic regression (McNemar p from 0.25 to 1.00), and fold-to-fold deviations (0.018 to 0.039) exceed the gaps between top models (Fig. 4). The ten models therefore cannot be separated, which answers RQ1. Logistic regression is also the fastest: it trains in 0.7 s and scores a message in 0.12 ms. Its strongest scam words are “text”, “free”, “txt”, “won” and “reply” (Fig. 5), which is what the explanation layer shows to the user. Its strongest legitimate cues “lt” and “gt” are a corpus artifact: they come from an escaped placeholder found in 240 raw messages, all legitimate."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig6_sms_cv_f1.png",
+   "w": 3.3,
+   "h": 2.009,
+   "cap": "Fig. 4. 5-fold cross-validated F1 for the ten text models (mean ± std); the selected model is red.",
+   "key": "cv"
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig4_top_terms.png",
+   "w": 3.3,
+   "h": 2.266,
+   "cap": "Fig. 5. Words with the largest logistic-regression coefficients for scam (red) and legitimate (blue).",
+   "key": "terms"
+  },
+  {
+   "t": "h2",
+   "text": "B. Phishing-Domain Detection (RQ2)"
+  },
+  {
+   "t": "table",
+   "title": "TABLE II.  PHISHING-DOMAIN CLASSIFIER PERFORMANCE",
+   "header": [
+    "Model",
+    "CV F1",
+    "Acc.",
+    "Prec.",
+    "Rec.",
+    "F1",
+    "AUC"
+   ],
+   "rows": [
+    [
+     "Voting Ens.",
+     "0.906 ± 0.002",
+     "0.911",
+     "0.953",
+     "0.864",
+     "0.906",
+     "0.960"
+    ],
+    [
+     "LightGBM",
+     "0.905 ± 0.002",
+     "0.910",
+     "0.949",
+     "0.868",
+     "0.906",
+     "0.960"
+    ],
+    [
+     "Hist. Grad. Boost.",
+     "0.905 ± 0.003",
+     "0.908",
+     "0.952",
+     "0.860",
+     "0.904",
+     "0.960"
+    ],
+    [
+     "MLP",
+     "0.905 ± 0.001",
+     "0.911",
+     "0.965",
+     "0.852",
+     "0.905",
+     "0.961"
+    ],
+    [
+     "Grad. Boosting",
+     "0.905 ± 0.002",
+     "0.906",
+     "0.951",
+     "0.857",
+     "0.902",
+     "0.961"
+    ],
+    [
+     "XGBoost",
+     "0.904 ± 0.002",
+     "0.909",
+     "0.949",
+     "0.865",
+     "0.905",
+     "0.959"
+    ],
+    [
+     "Logistic Reg.",
+     "0.902 ± 0.003",
+     "0.910",
+     "0.956",
+     "0.860",
+     "0.905",
+     "0.960"
+    ],
+    [
+     "Linear SVM",
+     "0.902 ± 0.002",
+     "0.907",
+     "0.954",
+     "0.856",
+     "0.902",
+     "0.960"
+    ],
+    [
+     "Random Forest",
+     "0.896 ± 0.002",
+     "0.899",
+     "0.925",
+     "0.868",
+     "0.896",
+     "0.952"
+    ],
+    [
+     "Decision Tree",
+     "0.894 ± 0.002",
+     "0.894",
+     "0.945",
+     "0.836",
+     "0.887",
+     "0.931"
+    ],
+    [
+     "Extra Trees",
+     "0.891 ± 0.005",
+     "0.892",
+     "0.908",
+     "0.871",
+     "0.889",
+     "0.943"
+    ],
+    [
+     "k-NN",
+     "0.890 ± 0.005",
+     "0.898",
+     "0.951",
+     "0.838",
+     "0.891",
+     "0.946"
+    ]
+   ],
+   "widths": [
+    1180,
+    1000,
+    530,
+    530,
+    530,
+    530,
+    560
+   ],
+   "note": "TABLE II. CV F1 = 5-fold cross-validated F1 (mean ± std). Other columns = held-out test (3,996 domains). Bold = selected model.",
+   "bold_row": 0
+  },
+  {
+   "t": "p",
+   "text": "Table II reports twelve models, and all fall in a narrow band (test F1 0.887 to 0.906). The voting ensemble is best by cross-validation (0.906) and reaches 91.1% accuracy, precision 0.953, recall 0.864 and F1 0.906 (85 false alarms and 272 misses among 1,998 domains per class; Fig. 6b). A character n-gram model on the raw string, with no engineered features, reaches F1 0.899, so the 67 features add little."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig_cm_pair.png",
+   "w": 3.3,
+   "h": 1.441,
+   "cap": "Fig. 6. Confusion matrices on the held-out test splits: (a) selected logistic regression, (b) selected voting ensemble.",
+   "key": "cm"
+  },
+  {
+   "t": "p",
+   "text": "Sub-domain count dominates the model (Fig. 7; mean |SHAP| 2.7 against 0.7 for length). This reflects how the data were built: legitimate domains are bare, while phishing hosts often use sub-domains. In the ablation (Table III, Fig. 8), removing structure lowers F1 from 0.905 to 0.890 and removing the TLD group to 0.879. On the 2,576 test domains with no sub-domain and no free host (595 phishing), the voting ensemble's F1 falls to 0.651 (precision 0.799, recall 0.550). This answers RQ2: the domain string separates the classes well when their structure differs, but is a much weaker signal for bare domains."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig8_shap.png",
+   "w": 3.3,
+   "h": 1.755,
+   "cap": "Fig. 7. Mean absolute SHAP value of the ten most influential domain features.",
+   "key": "shap"
+  },
+  {
+   "t": "table",
+   "title": "TABLE III.  DOMAIN FEATURE-GROUP ABLATION (LIGHTGBM)",
+   "header": [
+    "Configuration",
+    "# feat.",
+    "CV F1",
+    "Test F1",
+    "Test AUC",
+    "Test Rec."
+   ],
+   "rows": [
+    [
+     "All features",
+     "67",
+     "0.907",
+     "0.905",
+     "0.960",
+     "0.865"
+    ],
+    [
+     "− Structure",
+     "60",
+     "0.894",
+     "0.890",
+     "0.956",
+     "0.847"
+    ],
+    [
+     "− Lexical",
+     "56",
+     "0.894",
+     "0.902",
+     "0.956",
+     "0.851"
+    ],
+    [
+     "− Keywords",
+     "65",
+     "0.905",
+     "0.905",
+     "0.961",
+     "0.864"
+    ],
+    [
+     "− Brand look-alike",
+     "64",
+     "0.902",
+     "0.902",
+     "0.956",
+     "0.855"
+    ],
+    [
+     "− TLD",
+     "24",
+     "0.882",
+     "0.879",
+     "0.943",
+     "0.825"
+    ],
+    [
+     "− Free-hosting",
+     "66",
+     "0.907",
+     "0.904",
+     "0.960",
+     "0.863"
+    ],
+    [
+     "Lexical + brand + kw. only",
+     "16",
+     "0.869",
+     "0.867",
+     "0.933",
+     "0.816"
+    ]
+   ],
+   "widths": [
+    1520,
+    600,
+    680,
+    700,
+    700,
+    660
+   ],
+   "note": "TABLE III. “−” = feature group removed. CV F1 = 5-fold cross-validated F1; other columns = held-out test split.",
+   "bold_row": null
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig9_ablation.png",
+   "w": 3.3,
+   "h": 2.012,
+   "cap": "Fig. 8. Held-out test F1 after removing each domain feature group (LightGBM).",
+   "key": "abl"
+  },
+  {
+   "t": "h2",
+   "text": "C. Adversarial Robustness (RQ3)"
+  },
+  {
+   "t": "table",
+   "title": "TABLE IV.  EVASION UNDER AN ADAPTIVE ATTACKER (LOGISTIC REGRESSION)",
+   "header": [
+    "Defence",
+    "Seen %",
+    "Unseen %",
+    "All %",
+    "Clean F1",
+    "FP obf. %"
+   ],
+   "rows": [
+    [
+     "Baseline",
+     "9.0",
+     "18.0",
+     "13.9",
+     "0.953",
+     "0.1"
+    ],
+    [
+     "Canonicalization",
+     "4.9",
+     "5.7",
+     "9.0",
+     "0.953",
+     "0.3"
+    ],
+    [
+     "Adversarial training",
+     "0.8",
+     "12.3",
+     "8.2",
+     "0.957",
+     "0.4"
+    ],
+    [
+     "Both",
+     "0.8",
+     "9.8",
+     "8.9",
+     "0.957",
+     "0.4"
+    ]
+   ],
+   "widths": [
+    1300,
+    640,
+    760,
+    600,
+    780,
+    780
+   ],
+   "note": "TABLE IV. Evasion = share of caught test scams that evade after the attacker's best rewrite (B = 30). FP obf. = false alarms on obfuscated legitimate messages.",
+   "bold_row": null
+  },
+  {
+   "t": "p",
+   "text": "Table IV shows the share of caught scams that evade. Without defence, 13.9% of caught scams evade (9.0% through seen tricks, 18.0% through unseen ones). Canonicalization lowers overall evasion to 9.0%. Adversarial training lowers seen-trick evasion to 0.8% and overall evasion to 8.2%, but unseen evasion only to 12.3%; both together give 8.9% overall. Clean F1 does not fall (0.953 to 0.957) and false alarms on obfuscated legitimate text stay below 0.5%. Fig. 9 shows each trick: canonicalization drives homoglyph and zero-width evasion to 0.0% and 0.0%, but it was built against exactly those tricks, so this is a unit test and not proof of general robustness. Padding is the one trick no defence fixes: its evasion rises from 4.9% to 6.6–8.2%. With 122 caught scams, differences of one or two points are noise. This answers RQ3: hardening removes most evasion the defender has seen, less of what it has not, and none of padding."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig11_adv_heatmap.png",
+   "w": 3.3,
+   "h": 1.812,
+   "cap": "Fig. 9. Evasion rate (%) by trick and defence; tricks below the line were never seen in training.",
+   "key": "heat"
+  },
+  {
+   "t": "p",
+   "text": "Fig. 10 shows the rounds: most of the gain on seen tricks arrives by round 2 (9.0% to 1.6%), while unseen evasion falls slowly (18.0% to 12.3% over three rounds)."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig12_adv_rounds.png",
+   "w": 3.3,
+   "h": 1.918,
+   "cap": "Fig. 10. Evasion rate over adversarial-training rounds for adversarial training alone (solid) and with canonicalization (dashed).",
+   "key": "rounds"
+  },
+  {
+   "t": "h2",
+   "text": "D. Concept Drift and Adaptation (RQ4)"
+  },
+  {
+   "t": "table",
+   "title": "TABLE V.  LEGACY-TRAINED MODELS ON THE MODERN PROBE",
+   "header": [
+    "Model",
+    "Test F1",
+    "Acc.",
+    "Prec.",
+    "Rec.",
+    "Probe F1"
+   ],
+   "rows": [
+    [
+     "Hardened LR (ours)",
+     "0.957",
+     "0.867",
+     "0.893",
+     "0.833",
+     "0.862"
+    ],
+    [
+     "Voting Ens.",
+     "0.964",
+     "0.833",
+     "0.885",
+     "0.767",
+     "0.821"
+    ],
+    [
+     "Logistic Reg.",
+     "0.953",
+     "0.833",
+     "0.885",
+     "0.767",
+     "0.821"
+    ],
+    [
+     "Linear SVM",
+     "0.961",
+     "0.833",
+     "0.917",
+     "0.733",
+     "0.815"
+    ],
+    [
+     "Naive Bayes (compl.)",
+     "0.939",
+     "0.817",
+     "0.828",
+     "0.800",
+     "0.814"
+    ],
+    [
+     "Naive Bayes (mult.)",
+     "0.965",
+     "0.800",
+     "0.800",
+     "0.800",
+     "0.800"
+    ],
+    [
+     "MLP",
+     "0.953",
+     "0.783",
+     "0.947",
+     "0.600",
+     "0.735"
+    ],
+    [
+     "LightGBM",
+     "0.960",
+     "0.733",
+     "0.889",
+     "0.533",
+     "0.667"
+    ],
+    [
+     "XGBoost",
+     "0.964",
+     "0.650",
+     "0.765",
+     "0.433",
+     "0.553"
+    ],
+    [
+     "Extra Trees",
+     "0.948",
+     "0.617",
+     "1.000",
+     "0.233",
+     "0.378"
+    ],
+    [
+     "Random Forest",
+     "0.944",
+     "0.600",
+     "1.000",
+     "0.200",
+     "0.333"
+    ]
+   ],
+   "widths": [
+    1500,
+    640,
+    620,
+    620,
+    620,
+    860
+   ],
+   "note": "TABLE V. Test F1 = held-out SMS split; other columns = 60-message probe. Hardened LR = canonicalization + adversarial training.",
+   "bold_row": 0
+  },
+  {
+   "t": "p",
+   "text": "Every model loses F1 on modern messages (legacy test F1 0.94 to 0.97; Table V, Fig. 11). Linear and naive Bayes models lose least (probe F1 0.80 to 0.86), while tree ensembles collapse: random forest 0.33, extra trees 0.38, XGBoost 0.55. The forests raise no false alarms but catch only 20% and 23% of scams. The hardened model scores highest (0.862), but one message moves the probe by 1.7 points, so its lead over plain logistic regression (0.821) is within noise."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig13_drift.png",
+   "w": 3.3,
+   "h": 2.04,
+   "cap": "Fig. 11. Legacy SMS test F1 (blue) against modern-probe F1 (red) for each model.",
+   "key": "drift"
+  },
+  {
+   "t": "p",
+   "text": "Table VI and Fig. 12 show adaptation. Retraining with 30 reported messages raises held-out ROC-AUC from 0.924 to 0.936 and specificity from 0.88 to 0.92, but recall does not improve (0.87 to 0.84), and legacy F1 is unchanged (0.957). This answers RQ4: legacy detectors lose 0.13 to 0.61 F1 on modern scams, and a few dozen reports improve ranking without forgetting old data, but do not restore recall."
+  },
+  {
+   "t": "table",
+   "title": "TABLE VI.  ADAPTATION TO NEWLY REPORTED SCAMS (HARDENED LR)",
+   "header": [
+    "k",
+    "ROC-AUC",
+    "PR-AUC",
+    "Recall",
+    "Spec.",
+    "Legacy F1"
+   ],
+   "rows": [
+    [
+     "0",
+     "0.924",
+     "0.940",
+     "0.867",
+     "0.880",
+     "0.957"
+    ],
+    [
+     "6",
+     "0.929",
+     "0.944",
+     "0.840",
+     "0.880",
+     "0.957"
+    ],
+    [
+     "12",
+     "0.932",
+     "0.948",
+     "0.867",
+     "0.907",
+     "0.958"
+    ],
+    [
+     "18",
+     "0.935",
+     "0.950",
+     "0.853",
+     "0.907",
+     "0.957"
+    ],
+    [
+     "30",
+     "0.936",
+     "0.952",
+     "0.840",
+     "0.920",
+     "0.957"
+    ]
+   ],
+   "widths": [
+    500,
+    860,
+    800,
+    800,
+    800,
+    1100
+   ],
+   "note": "TABLE VI. k = reported probe messages used for the update. Held-out columns = mean over five splits (30 held-out messages each). Legacy F1 = held-out SMS test split.",
+   "bold_row": null
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig14_adaptation.png",
+   "w": 3.3,
+   "h": 1.627,
+   "cap": "Fig. 12. Held-out ROC-AUC, specificity and recall against the number of newly reported messages (mean ± std, five splits).",
+   "key": "adapt"
+  },
+  {
+   "t": "h2",
+   "text": "E. Multi-Agent Pipeline (RQ5)"
+  },
+  {
+   "t": "p",
+   "text": "For “Your account has been temporarily suspended… http://secure-bank-verify.xyz/login”, the text model gives 0.999 and the domain risk is 0.982, so R = 1.00 (high). The Verifier notes bait words in the address, many hyphens and a low-cost TLD, and the Analyzer tags urgency, authority, fear and a payment request. Two failures: “Mom I lost my phone, this is my new number…” gets R = 0.005 because it has no link and no scam vocabulary, and a legitimate payment receipt gets R = 0.964 (false alarm). Across the probe, the agent makes the same decisions as the text model (accuracy 86.7%; 3 false alarms, 5 misses) and its ROC-AUC moves only from 0.906 to 0.909 (Fig. 13). This answers RQ5: fusion adds ranking information but no new decisions, and scams with no link and no scam vocabulary escape both parts. The domain signal is judged on domains the author invented, so this is illustrative."
+  },
+  {
+   "t": "fig",
+   "file": "/home/claude/ScamShield/paper/figs/fig15_agent.png",
+   "w": 3.3,
+   "h": 2.434,
+   "cap": "Fig. 13. Text probability, domain risk and fused risk R for eight probe messages (dotted: 0.5; dashed: 0.85).",
+   "key": "agent"
+  },
+  {
+   "t": "h2",
+   "text": "F. Compute Cost"
+  },
+  {
+   "t": "table",
+   "title": "TABLE VII.  TRAINING AND INFERENCE COST (ONE CPU CORE)",
+   "header": [
+    "Model",
+    "Text train (s)",
+    "Text ms/msg",
+    "Domain train (s)",
+    "Domain ms/dom."
+   ],
+   "rows": [
+    [
+     "Logistic Reg.",
+     "0.7",
+     "0.12",
+     "0.2",
+     "0.001"
+    ],
+    [
+     "Linear SVM",
+     "0.8",
+     "0.12",
+     "2.0",
+     "0.002"
+    ],
+    [
+     "MLP",
+     "7.1",
+     "0.13",
+     "1.6",
+     "0.001"
+    ],
+    [
+     "Random Forest",
+     "4.1",
+     "0.20",
+     "3.9",
+     "0.049"
+    ],
+    [
+     "Extra Trees",
+     "4.0",
+     "0.22",
+     "4.6",
+     "0.081"
+    ],
+    [
+     "LightGBM",
+     "8.9",
+     "0.14",
+     "0.6",
+     "0.016"
+    ],
+    [
+     "XGBoost",
+     "18.4",
+     "0.17",
+     "0.8",
+     "0.005"
+    ],
+    [
+     "Voting Ens.",
+     "9.2",
+     "0.13",
+     "5.2",
+     "0.069"
+    ]
+   ],
+   "widths": [
+    1400,
+    900,
+    820,
+    900,
+    840
+   ],
+   "note": "TABLE VII. Text inference includes TF-IDF feature extraction; domain inference excludes feature extraction. Train = one fit on the training split.",
+   "bold_row": null
+  },
+  {
+   "t": "p",
+   "text": "Table VII shows that cost is not a deciding factor at this scale: every model scores a message in under 0.25 ms. Logistic regression is the cheapest to train (0.7 s on text), while XGBoost is the most expensive (18.4 s), so the simplest model gives the best balance of accuracy, explanation and speed."
+  },
+  {
+   "t": "h2",
+   "text": "G. Validation Summary"
+  },
+  {
+   "t": "p",
+   "text": "Table VIII collects the checks beyond the single held-out split, so each headline claim can be read against the test that stresses it."
+  },
+  {
+   "t": "table",
+   "title": "TABLE VIII.  VALIDATION SUMMARY",
+   "header": [
+    "Validation",
+    "Setting",
+    "Metric"
+   ],
+   "rows": [
+    [
+     "5-fold CV",
+     "Scam text, 10 models",
+     "F1 0.968 ± 0.023"
+    ],
+    [
+     "5-fold CV",
+     "Domains, 12 models",
+     "F1 0.906 ± 0.002"
+    ],
+    [
+     "McNemar",
+     "Best vs. 9 text models",
+     "all p ≥ 0.25"
+    ],
+    [
+     "Ablation",
+     "Domains, − TLD",
+     "F1 0.879 (vs. 0.905)"
+    ],
+    [
+     "Hard subset",
+     "Bare domains, n = 2,576",
+     "F1 0.651"
+    ],
+    [
+     "Unseen tricks",
+     "Adv. training",
+     "evasion 12.3% (vs. 18.0%)"
+    ],
+    [
+     "Modern probe",
+     "Hardened LR",
+     "F1 0.862 (legacy 0.957)"
+    ],
+    [
+     "Agent vs. text",
+     "Probe, 60 messages",
+     "F1 0.862 vs. 0.862"
+    ]
+   ],
+   "widths": [
+    1250,
+    1700,
+    1910
+   ],
+   "note": "TABLE VIII. Parentheses = comparison value for the same setting.",
+   "bold_row": null
+  },
+  {
+   "t": "h1",
+   "text": "VI. DISCUSSION"
+  },
+  {
+   "t": "h2",
+   "text": "A. Key Findings and Practical Implications"
+  },
+  {
+   "t": "p",
+   "text": "Four points follow. First, because ten text models cannot be separated, the simplest and fastest, logistic regression, is the sensible default and also supplies the explanation. Second, because a domain string alone separates bare domains poorly, a domain detector should be one signal among several, joined with evidence such as registration age and page content. Third, because adversarial training cut seen-trick evasion from 9.0% to 0.8% but left 12.3% for unseen tricks, a deployed system needs a canonicalizer and regular retraining against a broader attacker. Fourth, because tree ensembles collapsed under drift while linear models degraded less, models refreshed from reported scams should be checked on recent messages, not only on an old test set."
+  },
+  {
+   "t": "h2",
+   "text": "B. Scope and Practical Notes"
+  },
+  {
+   "t": "p",
+   "text": "The SMS corpus is old, UK-style spam, so scores near 0.95 describe an easy benchmark, and it contains the placeholder artifact noted above. The domain data pair a feed against a popularity list, so structure is a shortcut and the hard-subset F1 is the more cautious estimate. The 60-message probe is a stress test written by the author, not a benchmark. The attacker is rule-based and the canonicalizer was built against its tricks; a language-model attacker would likely find more evasions. One fixed seed and the default 0.5 threshold were used, the optional language-model advice hook was not run, and text-plus-domain fusion was not validated on a jointly labeled dataset. Only public data and invented messages were used. Next steps are a recent consented smishing corpus, domain evidence beyond the string, a language-model attacker, and a conversation-level model for scams that carry no link."
+  },
+  {
+   "t": "h1",
+   "text": "VII. CONCLUSION"
+  },
+  {
+   "t": "p",
+   "text": "This paper presented ScamShield, a five-phase pipeline for explainable, adversarially tested scam and phishing detection. Ten text models are statistically indistinguishable (selected logistic regression: 98.8% accuracy, F1 0.953); twelve domain models plateau near F1 0.90 and fall to 0.65 on bare domains; an adaptive attacker evades 13.9% of caught scams, and adversarial training removes most evasion the defender has seen but not padding; legacy detectors lose 0.13 to 0.61 F1 on modern scams; and the agent pipeline explains verdicts but adds no decisions beyond the text model. Together these results show that explainable detectors, an adaptive adversary and a drift measurement make scam detection that can be trusted for what it catches and honest about what it misses."
+  }
+ ],
+ "refs": [
+  "[1] T. A. Almeida, J. M. Gómez Hidalgo, and A. Yamakami, “Contributions to the study of SMS spam filtering: New collection and results,” in Proc. 2011 ACM Symp. Document Engineering (DocEng ’11), Mountain View, CA, USA, 2011.",
+  "[2] J. Ma, L. K. Saul, S. Savage, and G. M. Voelker, “Beyond blacklists: Learning to detect malicious web sites from suspicious URLs,” in Proc. 15th ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining, Paris, France, 2009, pp. 1245–1254.",
+  "[3] O. K. Sahingoz, E. Buber, O. Demir, and B. Diri, “Machine learning based phishing detection from URLs,” Expert Syst. Appl., vol. 117, pp. 345–357, 2019.",
+  "[4] N. Dalvi, P. Domingos, Mausam, S. Sanghai, and D. Verma, “Adversarial classification,” in Proc. 10th ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining, Seattle, WA, USA, 2004, pp. 99–108.",
+  "[5] D. Lowd and C. Meek, “Good word attacks on statistical spam filters,” in Proc. 2nd Conf. Email and Anti-Spam (CEAS), 2005.",
+  "[6] J. Gama, I. Žliobaitė, A. Bifet, M. Pechenizkiy, and A. Bouchachia, “A survey on concept drift adaptation,” ACM Comput. Surv., vol. 46, no. 4, art. 44, 2014.",
+  "[7] M. Krog, “Phishing.Database,” GitHub repository. [Online]. Available: https://github.com/mitchellkrogza/Phishing.Database",
+  "[8] OpenDNS, “public-domain-lists,” GitHub repository. [Online]. Available: https://github.com/opendns/public-domain-lists",
+  "[9] I. J. Goodfellow, J. Shlens, and C. Szegedy, “Explaining and harnessing adversarial examples,” in Proc. Int. Conf. Learning Representations (ICLR), 2015, arXiv:1412.6572.",
+  "[10] A. Madry, A. Makelov, L. Schmidt, D. Tsipras, and A. Vladu, “Towards deep learning models resistant to adversarial attacks,” in Proc. Int. Conf. Learning Representations (ICLR), 2018, arXiv:1706.06083.",
+  "[11] S. M. Lundberg and S.-I. Lee, “A unified approach to interpreting model predictions,” in Advances in Neural Information Processing Systems 30 (NeurIPS), 2017, pp. 4765–4774.",
+  "[12] T. Chen and C. Guestrin, “XGBoost: A scalable tree boosting system,” in Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining, San Francisco, CA, USA, 2016, pp. 785–794.",
+  "[13] G. Ke et al., “LightGBM: A highly efficient gradient boosting decision tree,” in Advances in Neural Information Processing Systems 30 (NeurIPS), 2017, pp. 3146–3154.",
+  "[14] F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” J. Mach. Learn. Res., vol. 12, pp. 2825–2830, 2011.",
+  "[15] J. Pearl, Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference. San Mateo, CA, USA: Morgan Kaufmann, 1988.",
+  "[16] Q. McNemar, “Note on the sampling error of the difference between correlated proportions or percentages,” Psychometrika, vol. 12, no. 2, pp. 153–157, Jun. 1947."
+ ]
+}

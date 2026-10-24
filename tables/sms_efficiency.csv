@@ -1,0 +1,11 @@
+Model,Train time (s),Inference (ms / sample)
+Logistic Regression,0.691,0.1204
+Voting Ensemble,9.1759,0.1329
+Linear SVM,0.8476,0.1222
+Multinomial NB,0.5704,0.1068
+Complement NB,0.6914,0.1229
+LightGBM,8.9028,0.1377
+Extra Trees,4.0454,0.219
+XGBoost,18.3807,0.1658
+MLP (neural net),7.0506,0.1289
+Random Forest,4.1196,0.2009
